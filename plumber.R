@@ -1,29 +1,30 @@
 library(plumber)
 library(ggplot2)
+library(jsonlite)
 dados = read.csv("dados_regressao.csv")
 modelo_salvar = lm(y~x+grupo, data=dados)
 saveRDS(modelo_salvar, file = "modelo_regressao.rds")
+options("plumber.port" = 7593)
+
+
 
 #* @apiTitle API de Regressão Linear
 #* @apiDescription Esta API possui funções de Regressão Linear
 
-#* Ver o banco
-#* @get /verBanco
-function() {
-  return(dados)
-}
-
+###########################################################################################
 #* Inserir um novo dado
 #* @param x Variável numérica preditora
 #* @param y Variável numérica resposta
 #* @param grupo Variável categórica
 #* @post /insereDado
 function(x, y, grupo) {
-    nova_linha = data.frame(x, grupo, y, momento_registro = lubridate::now()) #formatação não está sendo a mesma
-    dados_atualizados = rbind(dados, nova_linha) #ver se é <<- ou <- ou =
+    nova_linha = data.frame(x, grupo, y, momento_registro = format(lubridate::now(), "%Y-%m-%dT%H:%M:%SZ")) #formatação não está sendo a mesma
+    dados_atualizados = rbind(dados, nova_linha)
     readr::write_csv(dados_atualizados, file = "dados_regressao.csv")
+    dados <<- read.csv("dados_regressao.csv")
 }
 
+##########################################################################################
 #* Calcular parâmetros da Regressão
 #* @serializer json
 #* @get /parametros
@@ -38,6 +39,8 @@ function() {
     return(data.frame(valores))
 }
 
+
+###########################################################################################
 #* Gráfico de Regressão
 #* @serializer png
 #* @get /grafico
@@ -51,19 +54,19 @@ function() {
   print(grafico)
 }
 
+###########################################################################################
 #* Predição dos dados
 #* @parser json
 #* @serializer json
 #* @get /predicaoBanco
-function(req) {
-  modelo_atualizado = readRDS("modelo_regressao.rds") #VERIFICAR SE ISSO TA CERTO
-  predict(modelo, req$body)
+function(df) { #[{"x":10,"grupo":"A"},{"x":20,"grupo":"B"}]
+  novos = fromJSON(df)
+  predict(modelo, novos)
 }
 
-# Programmatically alter your API
-#* @plumber
-function(pr) {
-    pr %>%
-        # Overwrite the default serializer to return unboxed JSON
-        pr_set_serializer(serializer_unboxed_json())
-}
+###########################################################################################
+
+
+
+
+
