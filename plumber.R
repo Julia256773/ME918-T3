@@ -61,7 +61,7 @@ function() {
 #* @get /predicaoBanco
 function(df) { #[{"x":10,"grupo":"A"},{"x":20,"grupo":"B"}]
   novos = fromJSON(df)
-  predict(modelo, novos)
+  predict(modelo_salvar, novos)
 }
 
 ###########################################################################################
