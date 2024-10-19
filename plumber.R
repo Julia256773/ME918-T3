@@ -33,10 +33,10 @@ function() {
     saveRDS(modelo, file = "modelo_regressao.rds")
     coeficientes = modelo$coefficients
     sigma = summary(modelo)$sigma
-    valores = list(b0 = unname(coeficientes[1]), b1 = unname(coeficientes[2]),
-                   b2 = unname(coeficientes[3]), b3 = unname(coeficientes[4]),
-                   sigma = sigma)
-    return(data.frame(valores))
+    nome = append(names(coeficientes), "sigma")
+    valor = append(unname(coeficientes), sigma)
+    df_final = data.frame(nome, valor)
+    return(df_final)
 }
 
 
