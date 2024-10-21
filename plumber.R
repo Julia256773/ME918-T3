@@ -29,7 +29,7 @@ function(x, y, grupo) {
 #* @serializer json
 #* @get /parametros
 function() {
-    modelo = lm(y~x+grupo, data=dados)
+    modelo <<- lm(y~x+grupo, data=dados)
     saveRDS(modelo, file = "modelo_regressao.rds")
     coeficientes = modelo$coefficients
     sigma = summary(modelo)$sigma
@@ -38,7 +38,6 @@ function() {
     df_final = data.frame(nome, valor)
     return(df_final)
 }
-
 
 ###########################################################################################
 #* Gráfico de Regressão
@@ -58,10 +57,12 @@ function() {
 #* Predição dos dados
 #* @parser json
 #* @serializer json
-#* @get /predicaoBanco
-function(df) { #[{"x":10,"grupo":"A"},{"x":20,"grupo":"B"}]
-  novos = fromJSON(df)
-  predict(modelo_salvar, novos)
+#* @post /predicaoBanco
+
+function(req) {
+  novos <- req$body
+  preditos = predict(modelo_salvar, novos)
+  return(preditos)
 }
 
 ###########################################################################################

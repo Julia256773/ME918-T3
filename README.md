@@ -27,6 +27,14 @@ Por exemplo, se os campos indicados forem preenchidos tal que x = 1, y =
 É possível inserir um grupo que não existe previamente no conjunto de
 dados.
 
+## Excluir um dado
+
+Para excluir um dado, é necessário acessar o objeto /excluiDado, clicar
+em “Try it out” e preender o campo com o id da linha que deseja excluir.
+Este ID é referente à identificação do seu dado, não necessariamente
+corresponde ao número da linha no qual o dado aparece no conjunto de
+dados.
+
 ## Calcular Parâmetros da Regressão
 
 Os parâmetros da regressão linear são calculados a partir do banco de
@@ -58,29 +66,30 @@ neste respositório e seus parâmetros, a API retornará a seguinte imagem:
 ## Predição dos dados
 
 Para realizar uma predição a partir do banco de dados, é necessário
-acessar o objeto “/predicaoBanco” e clicar em “Try it out”. Em seguida,
-as informações das variáveis preditoras e categórica devem ser inseridas
-no campo “df” no formato JSON. Após clicar em “Execute”, a API deve
-retornar os valores preditos em formato JSON. O resultado será um valor
-predito para cada grupo de informações inseridas para realizar a
-predição.
+abrir uma nova janela no R e ter um dataframe salvo dos valores que
+deseja inserir para predição. Neste dataframe deve conter uma coluna de
+nome “x” com os valores desejados para a variável x e uma coluna de nome
+“grupo” com os valores desejados para esta variável, como o exemplo
+abaixo:
 
-Por exemplo, ao solicitar a predição de y para x = 10 e grupo = A, a API
-deverá receber
+``` r
+body = data.frame(x = c(3,4), grupo = c("A", "B"))
+body
+#>   x grupo
+#> 1 3     A
+#> 2 4     B
+```
 
-\[{“x”:10,“grupo”:“A”}\]
+Após rodar a API e ter esse dataframe salvo em outra página do R, rode o
+seguinte comando na mesma em que tem o objeto “body”:
 
-e retornar \[0.1137\].
+``` r
+request("http://127.0.0.1:7593/predicaoBanco") |>
++ req_method("POST") |>
++ req_body_json(data=body, auto_unbox = TRUE) |>
++ req_perform() |>
++ resp_body_string()
+```
 
-Para realizar mais de uma predição por vez, a solicitação à API deve ser
-escrita no formato:
-
-\[{“x”:10,“grupo”:“A”},{“x”:20,“grupo”:“B”}\]
-
-para qual será retornado \[0.1137,1.4673\].
-
-Se for de interesse do usuário, este poderá solicitar no mesmo comando
-quantas predições forem desejadas, desde que sigam as normas de escritas
-JSON. Além disso, os exemplos de predições foram feitos a partir do
-banco de dados contido neste repositório. Após modificado, as saídas das
-predições nos exemplos apresentados podem ser distintas.
+Você terá como resposta uma lista dos valores preditos na ordem dos
+preditores do seu dataframe.
