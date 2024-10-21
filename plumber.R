@@ -18,7 +18,7 @@ options("plumber.port" = 7593)
 #* @param grupo Variável categórica
 #* @post /insereDado
 function(x, y, grupo) {
-    nova_linha = data.frame(x, grupo, y, momento_registro = format(lubridate::now(), "%Y-%m-%dT%H:%M:%SZ")) #formatação não está sendo a mesma
+    nova_linha = data.frame(id = max(dados$id)+1, x, grupo, y, momento_registro = format(lubridate::now(), "%Y-%m-%dT%H:%M:%SZ")) #formatação não está sendo a mesma
     dados_atualizados = rbind(dados, nova_linha)
     readr::write_csv(dados_atualizados, file = "dados_regressao.csv")
     dados <<- read.csv("dados_regressao.csv")
@@ -33,6 +33,7 @@ function(id) {
   dados_novos = dados[-linha, ]
   readr::write_csv(dados_novos, file = "dados_regressao.csv")
   dados <<- read.csv("dados_regressao.csv")
+  dados
 }
 
 ##########################################################################################
