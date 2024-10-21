@@ -78,10 +78,12 @@ body
 #> 2 4     B
 ```
 
-Após rodar a API e ter esse dataframe salvo em outra página do R, rode o
-seguinte comando na mesma em que tem o objeto “body”:
+Após rodar a API (e mantê-la aberta) e ter esse dataframe salvo em outra
+página do R, rode o seguinte comando na mesma em que tem o objeto
+“body”:
 
 ``` r
+library(httr2)
 request("http://127.0.0.1:7593/predicaoBanco") |>
 + req_method("POST") |>
 + req_body_json(data=body, auto_unbox = TRUE) |>
