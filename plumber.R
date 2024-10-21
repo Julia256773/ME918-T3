@@ -24,6 +24,17 @@ function(x, y, grupo) {
     dados <<- read.csv("dados_regressao.csv")
 }
 
+###########################################################################################
+#* Excluir um dado
+#* @param id ID da linha a ser excluída
+#* @post /excluiDado
+function(id) {
+  linha = which(dados$id == id)
+  dados_novos = dados[-linha, ]
+  readr::write_csv(dados_novos, file = "dados_regressao.csv")
+  dados <<- read.csv("dados_regressao.csv")
+}
+
 ##########################################################################################
 #* Calcular parâmetros da Regressão
 #* @serializer json
