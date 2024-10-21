@@ -65,6 +65,30 @@ Por exemplo, ao calcular os parâmetros do banco de dados contido neste reposit�
   }
 ]
 
+## Calcular Resíduos e Valores Preditos 
+Para calcular os resíduos e os valores preditos para os dados observados é necessário acessar a rota /residuosEPreditos, clicar em "Try it out" e em seguida em "Execute".  A API deve retornar um data frame no formato JSON com os valores correspondentes aos resíduos e aos valores preditos do modelo ajustado.
+
+
+## Predição para novos valores
+
+Para realizar uma predição a partir do banco de dados, é necessário abrir uma nova janela no R e ter um dataframe salvo dos valores que deseja inserir para predição. Neste dataframe deve conter uma coluna de nome "x" com os valores desejados para a variável x e uma coluna de nome "grupo" com os valores desejados para esta variável, como o exemplo abaixo:
+
+```{r}
+body = data.frame(x = c(3,4), grupo = c("A", "B"))
+body
+```
+
+Após rodar a API e ter esse dataframe salvo em outra página do R, rode o seguinte comando na mesma em que tem o objeto "body":
+```{r, eval = FALSE}
+request("http://127.0.0.1:7593/predicaoBanco") |>
++ req_method("POST") |>
++ req_body_json(data=body, auto_unbox = TRUE) |>
++ req_perform() |>
++ resp_body_string()
+```
+Você terá como resposta uma lista dos valores preditos na ordem dos preditores do seu dataframe. 
+
+
 ## Gráfico de Regressão
 
 Para gerar um gráfico de pontos com a reta de regressão ajustada para cada variável categórica presente no banco, é necessário acessar o objeto "/grafico". Em seguida, clique em "Try it out" e em "Execute". A API deve retornar um gráfico com os dados e as retas coloridos de acordo com os grupos aos quais pertencem, além da legenda das cores.
@@ -96,24 +120,52 @@ df %>%
     theme_bw()
 ```
 
+## Gráficos de Resíduos 
 
+Para obter os gráficos de resíduos é necessário acessar a rota "/graficosResiduos", clicar em "Try it out" e em "Execute". A API deve retornar uma imagem com 6 gráficos: Valores predidos x Valores observados; QQplot dos resíduos; Valores preditos x Resíduos; Histograma dos resíduos; Número da observação x Resíduos; e Boxplot dos resíduos. 
 
-## Predição dos dados
+Por exemplo, ao gerar os gráficos de resíduos a partir do banco de dados contido neste respositório, a API retornará a seguinte imagem:
 
-Para realizar uma predição a partir do banco de dados, é necessário abrir uma nova janela no R e ter um dataframe salvo dos valores que deseja inserir para predição. Neste dataframe deve conter uma coluna de nome "x" com os valores desejados para a variável x e uma coluna de nome "grupo" com os valores desejados para esta variável, como o exemplo abaixo:
-
-```{r}
-body = data.frame(x = c(3,4), grupo = c("A", "B"))
-body
+```{r, echo=FALSE, message=FALSE}
+modelo = lm(y~x+grupo, data=df)
+residuos = summary(modelo)$residuals
+preditos = modelo$fitted.values
+banco = data.frame(residuos, preditos)
+df_combinado = cbind(banco, df)
+graf1 = ggplot(data = df_combinado, aes(x = preditos, y = y)) +
+    geom_point() +
+    theme_bw() +
+    labs(x = "Valores Preditos", y = "Valores observados")
+graf2 = ggplot(data = df_combinado, aes(sample = residuos)) +
+    stat_qq(color = "black") +
+    stat_qq_line(color = "blue") +
+    theme_bw() +
+    labs(x = "Quantis teóricos", y = "Quantis amostrais")
+graf3 = ggplot(data = df_combinado, aes(x = preditos, y = residuos)) +
+    geom_hline(yintercept = 0, color = "blue") +
+    geom_point() +
+    theme_bw() +
+    labs(x = "Valores Preditos", y = "Resíduos")
+graf4 = ggplot(data = df_combinado, aes(x = residuos)) +
+    geom_histogram(aes(y = after_stat(density)), binwidth = 1, fill = "gray", color = "black") +
+    geom_density(color = "blue", linewidth = 1) +
+    theme_bw() +
+    labs(y = "Densidade", x = "Resíduos")
+graf5 = ggplot(data = df_combinado, aes(x = seq_along(y), y = residuos)) +
+    geom_hline(yintercept = 0, color = "blue") +
+    geom_point() +
+    theme_bw() +
+    labs(x = "Índice da observação", y = "Resíduos")
+graf6 = ggplot(data = df_combinado, aes(y = residuos)) +
+    geom_boxplot(fill = "gray", color = "black") +
+    theme_minimal() +
+    labs(y = "Resíduos") +
+    theme(axis.text.x = element_blank())
+graficos = ggpubr::ggarrange(graf1, graf2, graf3, graf4, graf5, graf6,
+                               ncol = 2, nrow = 3)
+print(graficos)
 ```
 
-Após rodar a API e ter esse dataframe salvo em outra página do R, rode o seguinte comando na mesma em que tem o objeto "body":
-```{r, eval = FALSE}
-request("http://127.0.0.1:7593/predicaoBanco") |>
-+ req_method("POST") |>
-+ req_body_json(data=body, auto_unbox = TRUE) |>
-+ req_perform() |>
-+ resp_body_string()
-```
-Você terá como resposta uma lista dos valores preditos na ordem dos preditores do seu dataframe. 
+
+
 

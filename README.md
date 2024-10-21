@@ -53,20 +53,15 @@ repositório, a API retornará como parâmetros:
 “valor”: 2.9136 }, { “nome”: “grupoD”, “valor”: 3.7435 }, { “nome”:
 “sigma”, “valor”: 2.2833 }\]
 
-## Gráfico de Regressão
+## Calcular Resíduos e Valores Preditos
 
-Para gerar um gráfico de pontos com a reta de regressão ajustada para
-cada variável categórica presente no banco, é necessário acessar o
-objeto “/grafico”. Em seguida, clique em “Try it out” e em “Execute”. A
-API deve retornar um gráfico com os dados e as retas coloridos de acordo
-com os grupos aos quais pertencem, além da legenda das cores.
+Para calcular os resíduos e os valores preditos para os dados observados
+é necessário acessar a rota /residuosEPreditos, clicar em “Try it out” e
+em seguida em “Execute”. A API deve retornar um data frame no formato
+JSON com os valores correspondentes aos resíduos e aos valores preditos
+do modelo ajustado.
 
-Por exemplo, ao gerar um gráfico a partir do banco de dados contido
-neste respositório e seus parâmetros, a API retornará a seguinte imagem:
-
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
-
-## Predição dos dados
+## Predição para novos valores
 
 Para realizar uma predição a partir do banco de dados, é necessário
 abrir uma nova janela no R e ter um dataframe salvo dos valores que
@@ -96,3 +91,29 @@ request("http://127.0.0.1:7593/predicaoBanco") |>
 
 Você terá como resposta uma lista dos valores preditos na ordem dos
 preditores do seu dataframe.
+
+## Gráfico de Regressão
+
+Para gerar um gráfico de pontos com a reta de regressão ajustada para
+cada variável categórica presente no banco, é necessário acessar o
+objeto “/grafico”. Em seguida, clique em “Try it out” e em “Execute”. A
+API deve retornar um gráfico com os dados e as retas coloridos de acordo
+com os grupos aos quais pertencem, além da legenda das cores.
+
+Por exemplo, ao gerar um gráfico a partir do banco de dados contido
+neste respositório e seus parâmetros, a API retornará a seguinte imagem:
+
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+## Gráficos de Resíduos
+
+Para obter os gráficos de resíduos é necessário acessar a rota
+“/graficosResiduos”, clicar em “Try it out” e em “Execute”. A API deve
+retornar uma imagem com 6 gráficos: Valores predidos x Valores
+observados; QQplot dos resíduos; Valores preditos x Resíduos; Histograma
+dos resíduos; Número da observação x Resíduos; e Boxplot dos resíduos.
+
+Por exemplo, ao gerar os gráficos de resíduos a partir do banco de dados
+contido neste respositório, a API retornará a seguinte imagem:
+
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->

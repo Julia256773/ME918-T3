@@ -78,7 +78,68 @@ function(req) {
 }
 
 ###########################################################################################
+#* Calcular os resíduos e os valores preditos
+#* @serializer json
+#* @get /residuosEPreditos
+function() {
+  residuos = summary(modelo_salvar)$residuals
+  preditos = modelo_salvar$fitted.values
+  df = data.frame(residuos, preditos)
+  return(df)
+}
 
+###########################################################################################
+#* Gráfico dos Resíduos
+#* @serializer png
+#* @get /graficosResiduos
+graficos_residuos = function(){
+  residuos = summary(modelo_salvar)$residuals
+  preditos = modelo_salvar$fitted.values
+
+  df = data.frame(residuos, preditos)
+
+  df_combinado = cbind(df, dados)
+
+  graf1 = ggplot(data = df_combinado, aes(x = preditos, y = y)) +
+    geom_point() +
+    theme_bw() +
+    labs(x = "Valores Preditos", y = "Valores observados")
+
+  graf2 = ggplot(data = df_combinado, aes(sample = residuos)) +
+    stat_qq(color = "black") +
+    stat_qq_line(color = "blue") +
+    theme_bw() +
+    labs(x = "Quantis teóricos", y = "Quantis amostrais")
+
+  graf3 = ggplot(data = df_combinado, aes(x = preditos, y = residuos)) +
+    geom_hline(yintercept = 0, color = "blue") +
+    geom_point() +
+    theme_bw() +
+    labs(x = "Valores Preditos", y = "Resíduos")
+
+  graf4 = ggplot(data = df_combinado, aes(x = residuos)) +
+    geom_histogram(aes(y = after_stat(density)), binwidth = 1, fill = "gray", color = "black") +
+    geom_density(color = "blue", linewidth = 1) +
+    theme_bw() +
+    labs(y = "Densidade", x = "Resíduos")
+
+  graf5 = ggplot(data = df_combinado, aes(x = seq_along(y), y = residuos)) +
+    geom_hline(yintercept = 0, color = "blue") +
+    geom_point() +
+    theme_bw() +
+    labs(x = "Índice da observação", y = "Resíduos")
+
+  graf6 = ggplot(data = df_combinado, aes(y = residuos)) +
+    geom_boxplot(fill = "gray", color = "black") +
+    theme_minimal() +
+    labs(y = "Resíduos") +
+    theme(axis.text.x = element_blank())
+
+  graficos = ggpubr::ggarrange(graf1, graf2, graf3, graf4, graf5, graf6,
+                               ncol = 2, nrow = 3)
+
+  print(graficos)
+}
 
 
 
