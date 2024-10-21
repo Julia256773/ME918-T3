@@ -48,9 +48,10 @@ JSON dos valores correspondentes aos parâmetros presentes na regressão.
 Por exemplo, ao calcular os parâmetros do banco de dados contido neste
 repositório, a API retornará como parâmetros:
 
-\[ { “nome”: “(Intercept)”, “valor”: -1.4485 }, { “nome”: “x”, “valor”:
-0.1286 }, { “nome”: “grupoB”, “valor”: 1.7128 }, { “nome”: “grupoC”,
-“valor”: 2.8206 }, { “nome”: “sigma”, “valor”: 2.3574 }\]
+\[ { “nome”: “(Intercept)”, “valor”: -1.0332 }, { “nome”: “x”, “valor”:
+0.0793 }, { “nome”: “grupoB”, “valor”: 1.5209 }, { “nome”: “grupoC”,
+“valor”: 2.9136 }, { “nome”: “grupoD”, “valor”: 3.7435 }, { “nome”:
+“sigma”, “valor”: 2.2833 }\]
 
 ## Gráfico de Regressão
 

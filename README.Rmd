@@ -41,23 +41,27 @@ Por exemplo, ao calcular os par√¢metros do banco de dados contido neste reposit√
 [
   {
     "nome": "(Intercept)",
-    "valor": -1.4485
+    "valor": -1.0332
   },
   {
     "nome": "x",
-    "valor": 0.1286
+    "valor": 0.0793
   },
   {
     "nome": "grupoB",
-    "valor": 1.7128
+    "valor": 1.5209
   },
   {
     "nome": "grupoC",
-    "valor": 2.8206
+    "valor": 2.9136
+  },
+  {
+    "nome": "grupoD",
+    "valor": 3.7435
   },
   {
     "nome": "sigma",
-    "valor": 2.3574
+    "valor": 2.2833
   }
 ]
 
