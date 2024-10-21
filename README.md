@@ -30,10 +30,12 @@ dados.
 ## Excluir um dado
 
 Para excluir um dado, é necessário acessar o objeto /excluiDado, clicar
-em “Try it out” e preender o campo com o id da linha que deseja excluir.
-Este ID é referente à identificação do seu dado, não necessariamente
-corresponde ao número da linha no qual o dado aparece no conjunto de
-dados.
+em “Try it out” e preencher o campo com o id da linha que deseja
+excluir. Este ID é referente à identificação do seu dado, não
+necessariamente corresponde ao número da linha no qual o dado aparece no
+conjunto de dados. A API retornará o banco de dados atualizado com a
+observação excluída, sendo que só é possível excluir uma observação por
+vez.
 
 ## Calcular Parâmetros da Regressão
 

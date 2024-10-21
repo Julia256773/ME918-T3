@@ -9,6 +9,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+
 # ME918-T3
 
 Este repositório contém funções de Regressão Linear simples para API e um banco de dados próprio para regressão. O conjunto de dados contém três colunas: uma correspondente à variável resposta e duas às covariáveis ("x" e "grupo", sendo esta última subdividida em três categorias: A, B e C).
