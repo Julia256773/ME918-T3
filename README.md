@@ -1,15 +1,15 @@
 
 # ME918-T3
 
-Este repositório contém funções de Regressão Linear simples para API e
-um banco de dados próprio para regressão. O conjunto de dados contém
-cinco variáveis: uma com o id da obseração, uma correspondente à
-variável resposta, duas às covariáveis “x” - variável numérica - e
-“grupo” - variável categórica e a quinta se refere à data e horário na
-qual a observação foi inserida.
+Este repositório contém funções de Regressão Linear para API e um banco
+de dados próprio para regressão. O conjunto de dados contém cinco
+variáveis: uma com o `id` da obseração, uma correspondente à variável
+resposta `y`, duas às covariáveis `x` - variável numérica - e `grupo` -
+variável categórica e a quinta se refere à data e horário na qual a
+observação foi inserida.
 
 Para utilizar esta API, você deverá baixar todo o repositório, abrir o
-arquivo plumber.R e rodar no canto superior direito “run API”.
+arquivo plumber.R e executar “run API” no canto superior direito.
 
 ## Inserir novo dado
 
@@ -63,7 +63,7 @@ Para calcular a signficância estatística dos coeficientes da regressão é
 necessário acessar a rota `/significancia`, clicar em “Try it out” e em
 seguida em “Execute”. A API deve retornar o resultado no formato JSON.
 Por default o nível de significância usado é 0.05, mas outros níveis de
-significância podem ser usados usando o argumento sig.
+significância podem ser usados usando o argumento `sig`.
 
 Por exemplo, ao calcular o p-valor dos coeficientes do modelo de
 regressão ajustado com o banco de dados contido neste repositório e
@@ -78,7 +78,7 @@ verificar se eles são significativos a um nível de significância de
 
 ## Calcular Resíduos
 
-ara calcular os resíduos da regressão é necessário acessar a rota
+Para calcular os resíduos da regressão é necessário acessar a rota
 `/residuos`, clicar em “Try it out” e em seguida em “Execute”. A API
 deve retornar o resultado no formato JSON.
 
@@ -161,7 +161,8 @@ retornar uma imagem com 6 gráficos: Valores predidos x Valores
 observados; QQplot dos resíduos; Valores preditos x Resíduos; Histograma
 dos resíduos; Número da observação x Resíduos; e Boxplot dos resíduos.
 
-Por exemplo, ao gerar os gráficos de resíduos a partir do banco de dados
-contido neste respositório, a API retornará a seguinte imagem:
+Por exemplo, ao gerar os gráficos de resíduos a partir das primeiras 25
+linhas do banco de dados original contido neste respositório, a API
+retornará a seguinte imagem:
 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
