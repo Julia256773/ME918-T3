@@ -31,7 +31,6 @@ function(id) {
   dados_novos = dados[-linha, ]
   readr::write_csv(dados_novos, file = "dados_regressao.csv")
   dados <<- read.csv("dados_regressao.csv")
-  dados
 }
 
 ##########################################################################################
@@ -51,6 +50,7 @@ function() {
 ################################################################################
 #* Calcular a signficância dos coeficientes da regressão
 #* @serializer json
+#* @param sig Nível de significância desejado
 #* @get /significancia
 function(sig=0.05) {
   pvalor = unname(summary(modelo)$coefficients[,4])
