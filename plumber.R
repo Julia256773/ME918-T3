@@ -2,10 +2,8 @@ library(plumber)
 library(ggplot2)
 library(jsonlite)
 dados = read.csv("dados_regressao.csv")
-modelo_salvar = lm(y~x+grupo, data=dados)
-saveRDS(modelo_salvar, file = "modelo_regressao.rds")
+modelo = lm(y~x+grupo, data=dados)
 options("plumber.port" = 7593)
-
 
 
 #* @apiTitle API de Regressão Linear
@@ -18,7 +16,7 @@ options("plumber.port" = 7593)
 #* @param grupo Variável categórica
 #* @post /insereDado
 function(x, y, grupo) {
-    nova_linha = data.frame(id = max(dados$id)+1, x, grupo, y, momento_registro = format(lubridate::now(), "%Y-%m-%dT%H:%M:%SZ")) #formatação não está sendo a mesma
+    nova_linha = data.frame(id = max(dados$id)+1, x, grupo, y, momento_registro = format(lubridate::now(), "%Y-%m-%dT%H:%M:%SZ"))
     dados_atualizados = rbind(dados, nova_linha)
     readr::write_csv(dados_atualizados, file = "dados_regressao.csv")
     dados <<- read.csv("dados_regressao.csv")
@@ -37,18 +35,60 @@ function(id) {
 }
 
 ##########################################################################################
-#* Calcular parâmetros da Regressão
+#* Calcular parâmetros da regressão
 #* @serializer json
 #* @get /parametros
 function() {
     modelo <<- lm(y~x+grupo, data=dados)
-    saveRDS(modelo, file = "modelo_regressao.rds")
     coeficientes = modelo$coefficients
     sigma = summary(modelo)$sigma
     nome = append(names(coeficientes), "sigma")
     valor = append(unname(coeficientes), sigma)
     df_final = data.frame(nome, valor)
     return(df_final)
+}
+
+################################################################################
+#* Calcular a signficância dos coeficientes da regressão
+#* @serializer json
+#* @get /significancia
+function(sig=0.05) {
+  pvalor = unname(summary(modelo)$coefficients[,4])
+  coeficientes = modelo$coefficients
+  nome = names(coeficientes)
+  df = data.frame(nome, pvalor)
+  df$significativo = ifelse(pvalor < sig, "Sim", "Não")
+  return(df)
+}
+
+
+################################################################################
+#* Calcular os resíduos da regressão
+#* @serializer json
+#* @get /residuos
+function() {
+  residuos = summary(modelo)$residuals
+  return(residuos)
+}
+
+################################################################################
+#* Calcular os valores preditos para as observações do banco de dados
+#* @serializer json
+#* @get /preditos
+function() {
+  preditos = modelo$fitted.values
+  return(preditos)
+}
+
+###########################################################################################
+#* Calcular a predição para novos dados
+#* @parser json
+#* @serializer json
+#* @get /predicao
+function(req) {
+  novos <- req$body
+  preditos = predict(modelo, novos)
+  return(preditos)
 }
 
 ###########################################################################################
@@ -66,35 +106,12 @@ function() {
 }
 
 ###########################################################################################
-#* Predição dos dados
-#* @parser json
-#* @serializer json
-#* @post /predicaoBanco
-
-function(req) {
-  novos <- req$body
-  preditos = predict(modelo_salvar, novos)
-  return(preditos)
-}
-
-###########################################################################################
-#* Calcular os resíduos e os valores preditos
-#* @serializer json
-#* @get /residuosEPreditos
-function() {
-  residuos = summary(modelo_salvar)$residuals
-  preditos = modelo_salvar$fitted.values
-  df = data.frame(residuos, preditos)
-  return(df)
-}
-
-###########################################################################################
-#* Gráfico dos Resíduos
+#* Grafico dos Resíduos
 #* @serializer png
 #* @get /graficosResiduos
 graficos_residuos = function(){
-  residuos = summary(modelo_salvar)$residuals
-  preditos = modelo_salvar$fitted.values
+  residuos = summary(modelo)$residuals
+  preditos = modelo$fitted.values
 
   df = data.frame(residuos, preditos)
 
